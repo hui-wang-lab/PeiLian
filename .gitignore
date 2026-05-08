@@ -1,0 +1,47 @@
+# 环境与密钥
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+.venv/
+venv/
+env/
+.eggs/
+
+# 测试与覆盖率
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+
+# 类型检查器 / lint 缓存
+.mypy_cache/
+.ruff_cache/
+.pyre/
+
+# IDE / 编辑器
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 项目本地文件
+*.log
+.cache/
+
+# Claude Code 本地状态（settings.local.json 是本机配置，不进版本管理）
+.claude/settings.local.json
