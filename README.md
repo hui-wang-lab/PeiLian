@@ -41,6 +41,32 @@ python scripts/demo_p0.py --skip-llm
 
 ---
 
+## P1 Demo — 单 persona 单场景陪练
+
+```powershell
+# 1. 安装含 dev 依赖（首次或更新依赖时执行）
+pip install -e ".[dev]"
+
+# 2. 确保 .env 已配置 OPENAI_API_KEY（P1 不支持 --skip-llm）
+
+# 3. 进入陪练对话
+python scripts/demo_p1.py
+
+# 4. 跑测试
+pytest
+```
+
+陪练界面只展示客户称呼、会面场景、时间约束与代理人任务提示。家庭结构、收入、已有保单等信息都不会被预先暴露——必须由代理人在对话中**问出来**。客户严格遵守「代理人驱动、客户被动反应」原则（详见 [`CLAUDE.md`](CLAUDE.md) §2）。
+
+CLI 内可用命令：
+
+| 命令 | 作用 |
+|---|---|
+| `/quit` | 退出陪练 |
+| `/reset` | 清空对话历史并重新开始 |
+
+---
+
 ## 项目地图
 
 | 文件 | 用途 |
