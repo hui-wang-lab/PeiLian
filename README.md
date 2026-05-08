@@ -67,6 +67,45 @@ CLI 内可用命令：
 
 ---
 
+## P2 Demo — 规则层评估（必问点覆盖率 + 合规红线扫描）
+
+```powershell
+# 1. 跑评估 demo（无需 OPENAI_API_KEY，纯本地规则层）
+python scripts/demo_p2.py
+
+# 2. 跑测试（含 P2 新增）
+pytest
+```
+
+`demo_p2.py` 会加载 `SAMPLE_CONVERSATION_P2`（一段同时含漏问与违规的样本对话）跑评估，输出形如：
+
+```
+【必问点覆盖率】4 / 6  (66.7%)
+  ✓ 已覆盖：family_structure (家庭结构), occupation (职业行业), ...
+  ✗ 漏问：  income (收入水平), future_planning (未来规划)
+
+【合规红线扫描】发现 1 处违规
+  ⚠ 第 3 轮 [代理人]
+     原话：…保证收益 4.5%，比存款利…
+     命中规则：
+       - 保证收益（关键词「保证收益」）
+       - 与存款/国债误导对比（关键词「比存款」）
+```
+
+要在 P1 陪练结束后手动评估自己的真实对话历史，可以：
+
+```python
+from peilian.observer import evaluate
+from peilian.report import render_report
+
+report = evaluate(dialogue.messages)  # dialogue 是 P1 demo 里的 Dialogue 实例
+print(render_report(report))
+```
+
+> 状态观察器与对话引擎**物理隔离**：`observer.evaluate()` 只消费 `messages`，不会影响客户回复或推进对话分支（详见 [`CLAUDE.md`](CLAUDE.md) §2.2）。
+
+---
+
 ## 项目地图
 
 | 文件 | 用途 |
