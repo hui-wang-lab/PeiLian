@@ -1,13 +1,14 @@
 # PeiLian ROADMAP
 
-> ## 🚩 当前游标：**P2 — 状态观察器 + 规则评估**
-> 状态：进行中（待起草 `docs/phases/phase-2.md`）
+> ## 🚩 当前游标：**P3 — LLM-as-Judge 评估**
+> 状态：进行中（待起草 `docs/phases/phase-3.md`）
 >
 > 切换游标必须由**用户显式确认**。Claude Code 不得自动推进到下一阶段。
 >
 > **历史**：
 > - P0 ✅ 已完成（commit `f7ba079`，2026-05-08）
 > - P1 ✅ 已完成（commit `77bb98e`，2026-05-08）
+> - P2 ✅ 已完成（commit `71fefc4`，2026-05-08）
 
 ---
 
@@ -17,8 +18,8 @@
 |---|---|---|---|---|
 | P0 ✅ | 工作流地基 | 项目骨架 + 文档体系 + 最小 LLM 往返 | `python scripts/demo_p0.py [--skip-llm]` | demo 跑通且文档体系建立 |
 | P1 ✅ | 单 persona 单场景 | 1 个写死客户 + 1 个固定场景的 CLI 完整对话 | `python scripts/demo_p1.py` | 代理人能与该客户走完一轮对话且客户严格被动反应 |
-| **P2** | 状态观察器 + 规则评估 | 对话结束后输出必问点覆盖率 + 合规红线扫描 | `python scripts/demo_p2.py` | 给定一段对话能正确标出漏问与违规 |
-| P3 | LLM-as-Judge 评估 | 加入话术质量、共情度、逻辑结构的模型评分 | `python scripts/demo_p3.py` | 同段对话多次评分稳定性 ±1 分 |
+| P2 ✅ | 状态观察器 + 规则评估 | 对话结束后输出必问点覆盖率 + 合规红线扫描 | `python scripts/demo_p2.py` | 给定一段对话能正确标出漏问与违规 |
+| **P3** | LLM-as-Judge 评估 | 加入话术质量、共情度、逻辑结构的模型评分 | `python scripts/demo_p3.py` | 同段对话多次评分稳定性 ±1 分 |
 | P4 | Persona 工厂 | 配置化生成多种客户画像 + 难度档 | `python scripts/demo_p4.py` | 一份 yaml 能生成 5+ 种 persona，行为差异可观测 |
 | P5 | 产品 RAG | 接入条款/合规知识库，AI 客户问条款不胡编 | `python scripts/demo_p5.py` | 故意问条款细节，回答能溯源到知识库 |
 | P6 | Web UI + 报告 | 浏览器里完成陪练并看到可视化报告 | `npm run dev` 或 `python -m peilian.server` | 端到端跑通，雷达图/逐句标注可见 |
@@ -66,7 +67,7 @@
 
 ---
 
-### P2 — 状态观察器 + 规则评估  🚩 当前
+### P2 — 状态观察器 + 规则评估  ✅ 已完成
 
 **目标**：对话结束后，输出基于规则的评估报告。
 
@@ -82,7 +83,7 @@
 
 ---
 
-### P3 — LLM-as-Judge 评估
+### P3 — LLM-as-Judge 评估  🚩 当前
 
 **目标**：加入模型层评估，覆盖规则层无法判断的维度。
 
