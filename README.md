@@ -140,6 +140,6 @@ pytest
 
 ## 当前阶段
 
-🚩 **P3 — LLM-as-Judge 评估**（详见 [`docs/phases/phase-3.md`](docs/phases/phase-3.md)）
+🚩 **P4 — Persona 工厂 + CustomerState**（详见 [`docs/phases/phase-4.md`](docs/phases/phase-4.md)）
 
 阶段切换由用户显式确认；不会自动推进到下一阶段。
