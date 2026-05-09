@@ -56,3 +56,35 @@ SAMPLE_CONVERSATION_P2: list[dict[str, str]] = [
     # 8：客户 — 被动应答
     {"role": "assistant", "content": "还行。"},
 ]
+
+
+SAMPLE_CONVERSATION_P3: list[dict[str, str]] = [
+    # 0：system 占位（demo 不依赖具体 prompt 内容）
+    {"role": "system", "content": ""},
+
+    # 1：代理人 — 开场较空泛，尚未问家庭结构
+    {"role": "user", "content": "您好张先生，今天我们简单聊聊。"},
+    # 2：客户 — 故意越界：未问家庭即报家庭结构；同时给后续一致性埋点
+    {
+        "role": "assistant",
+        "content": "你好，我家里 5 口人，太太是医生，在协和，还有两个孩子和岳母。",
+    },
+
+    # 3：代理人 — 命中 occupation
+    {"role": "user", "content": "那您工作呢？"},
+    # 4：客户 — 故意越界：职业被问到可答，但价格敏感尚未触发
+    {"role": "assistant", "content": "我做 IT 的。其实我最担心的就是这款贵不贵。"},
+
+    # 5：代理人 — 异议处理较模板化
+    {
+        "role": "user",
+        "content": "这款其实定价很合理，您看每天也就一杯咖啡的钱。",
+    },
+    # 6：客户 — 故意一致性问题：太太职业前后不一致
+    {"role": "assistant", "content": "嗯。对了我太太在律所做合伙人，工作蛮忙。"},
+
+    # 7：代理人 — 命中 health_status
+    {"role": "user", "content": "您身体怎么样？"},
+    # 8：客户 — 正常被动回答
+    {"role": "assistant", "content": "还行，没什么大问题。"},
+]

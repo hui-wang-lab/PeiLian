@@ -106,6 +106,26 @@ print(render_report(report))
 
 ---
 
+## P3 Demo — LLM-as-Judge 评估
+
+```powershell
+# 1. 确保 .env 已配置 OPENAI_API_KEY（P3 不支持 --skip-llm）
+
+# 2. 跑综合评估 demo：P2 规则层 + P3 代理人评分 + P3 客户诊断
+python scripts/demo_p3.py
+
+# 3. 手动验证 judge 稳定性（会调用真实 LLM，不进 pytest）
+python scripts/check_stability_p3.py
+python scripts/check_stability_p3.py --runs 10
+
+# 4. 跑测试（P3 测试全部使用 mock client，不烧 LLM 额度）
+pytest
+```
+
+`demo_p3.py` 固定加载 `SAMPLE_CONVERSATION_P3`，这段样本故意包含 AI 客户越界泄露与前后矛盾，用于演示 customer judge 的诊断能力。P3 judge 仍然是纯诊断层：不修改 `dialogue.py`，不接入生成链路，不调度对话分支。
+
+---
+
 ## 项目地图
 
 | 文件 | 用途 |
@@ -120,6 +140,6 @@ print(render_report(report))
 
 ## 当前阶段
 
-🚩 **P0 — 项目初始化与开发工作流地基**（详见 [`docs/phases/phase-0.md`](docs/phases/phase-0.md)）
+🚩 **P3 — LLM-as-Judge 评估**（详见 [`docs/phases/phase-3.md`](docs/phases/phase-3.md)）
 
 阶段切换由用户显式确认；不会自动推进到下一阶段。

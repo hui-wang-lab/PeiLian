@@ -153,9 +153,9 @@ python scripts/check_stability_p3.py --runs 10
 ═══════════════════════════════════════
 
 【一、规则层评估（P2）】
-  必问点覆盖率：3 / 6  (50.0%)
-    ✓ 已覆盖：family_structure (家庭结构), occupation (职业行业), health_status (健康情况)
-    ✗ 漏问：  income (收入水平), existing_coverage (已有保障), future_planning (未来规划)
+  必问点覆盖率：2 / 6  (33.3%)
+    ✓ 已覆盖：occupation (职业行业), health_status (健康情况)
+    ✗ 漏问：  family_structure (家庭结构), income (收入水平), existing_coverage (已有保障), future_planning (未来规划)
   合规红线扫描：未发现违规
 
 【二、代理人评分（P3）】
@@ -430,7 +430,7 @@ def render_judge_result(result: JudgeResult) -> str: ...
 | 7 | user | 您身体怎么样？ | 命中 health_status |
 | 8 | assistant | 还行。 | 正常被动反应 |
 
-**预期 evaluate 结果**：覆盖 family_structure / occupation / health_status (3/6)；漏 income / existing_coverage / future_planning；红线 0。
+**预期 evaluate 结果**：覆盖 occupation / health_status (2/6)；漏 family_structure / income / existing_coverage / future_planning；红线 0。
 
 **预期 judge_customer 结果**：
 - 越界泄露 issues：≥ 2 条（第 2 轮家庭、第 4 轮 hidden_concerns）
