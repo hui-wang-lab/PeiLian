@@ -1,7 +1,7 @@
 # PeiLian ROADMAP
 
 > ## 🚩 当前游标：**P3 — LLM-as-Judge 评估**
-> 状态：进行中（待起草 `docs/phases/phase-3.md`）
+> 状态：进行中（P3 spec 已起草，待实现）
 >
 > 切换游标必须由**用户显式确认**。Claude Code 不得自动推进到下一阶段。
 >
@@ -20,7 +20,7 @@
 | P1 ✅ | 单 persona 单场景 | 1 个写死客户 + 1 个固定场景的 CLI 完整对话 | `python scripts/demo_p1.py` | 代理人能与该客户走完一轮对话且客户严格被动反应 |
 | P2 ✅ | 状态观察器 + 规则评估 | 对话结束后输出必问点覆盖率 + 合规红线扫描 | `python scripts/demo_p2.py` | 给定一段对话能正确标出漏问与违规 |
 | **P3** | LLM-as-Judge 评估 | 加入话术质量、共情度、逻辑结构的模型评分 | `python scripts/demo_p3.py` | 同段对话多次评分稳定性 ±1 分 |
-| P4 | Persona 工厂 | 配置化生成多种客户画像 + 难度档 | `python scripts/demo_p4.py` | 一份 yaml 能生成 5+ 种 persona，行为差异可观测 |
+| P4 | Persona 工厂 + CustomerState | 配置化生成多种客户画像 + 运行时客户状态 | `python scripts/demo_p4.py` | 一份 yaml 能生成 5+ 种 persona，且客户信息披露/隐藏关切按状态逐步推进 |
 | P5 | 产品 RAG | 接入条款/合规知识库，AI 客户问条款不胡编 | `python scripts/demo_p5.py` | 故意问条款细节，回答能溯源到知识库 |
 | P6 | Web UI + 报告 | 浏览器里完成陪练并看到可视化报告 | `npm run dev` 或 `python -m peilian.server` | 端到端跑通，雷达图/逐句标注可见 |
 | P7 | 错题本 + 自适应难度 | 多次训练后系统能推荐弱项专项练习 | `python scripts/demo_p7.py` | 连续 3 次对某场景扣分，下次自动加大该场景比重 |
@@ -90,25 +90,33 @@
 **纵切范围**：
 - LLM judge prompt + rubric
 - 多次打分的稳定性测试
+- 诊断 AI 客户是否过早暴露家庭/收入/已有保障/hidden_concerns，或出现前后矛盾
 
 **验收摘要**：
 - 同一段对话多次评分稳定性 ±1 分以内
 - rubric 覆盖话术专业度、共情度、逻辑结构、异议处理质量
+- 能指出 AI 客户自身的越界泄露或一致性问题，但不在 P3 改写对话生成链路
 
 ---
 
-### P4 — Persona 工厂
+### P4 — Persona 工厂 + CustomerState
 
-**目标**：从配置生成多种 persona，可调难度档。
+**目标**：从配置生成多种 persona，可调难度档，并引入本轮对话内的 `CustomerState`，让 AI 客户按状态逐步披露信息与隐藏关切。
 
 **纵切范围**：
 - Persona yaml schema（隐藏关切、性格参数、坚持度等）
 - Persona 工厂函数
 - 难度档分级机制
+- CustomerState v1：记录已披露字段、当轮允许回答字段、隐藏关切状态、信任度与耐心值
+- 生成前状态摘要注入：把 CustomerState 转成面向 LLM 的简短约束，提升被动反应稳定性
+- 生成后状态更新：根据代理人提问与客户回复更新已披露字段、隐藏关切触发/表达进度
+- 保持状态观察与场景控制边界：CustomerState 只约束“可说/不可说/说到什么程度”，不按剧本强行推进话题
 
 **验收摘要**：
 - 一份 yaml 能生成 5+ 种行为差异可观测的 persona
 - 难度档切换会显著改变客户行为（坚持度、信息隐藏度等）
+- 同一轮陪练中，客户不会重复遗忘已披露信息；hidden_concerns 能按未触发→已触发→暗示→表达的节奏逐步释放
+- 面对泛泛提问时客户保持模糊或反问；面对明确点名问题时只回答被问到的那一项
 
 ---
 
