@@ -20,7 +20,7 @@
 | P1 ✅ | 单 persona 单场景 | 1 个写死客户 + 1 个固定场景的 CLI 完整对话 | `python scripts/demo_p1.py` | 代理人能与该客户走完一轮对话且客户严格被动反应 |
 | P2 ✅ | 状态观察器 + 规则评估 | 对话结束后输出必问点覆盖率 + 合规红线扫描 | `python scripts/demo_p2.py` | 给定一段对话能正确标出漏问与违规 |
 | P3 ✅ | LLM-as-Judge 评估 | 加入话术质量、共情度、逻辑结构的模型评分 | `python scripts/demo_p3.py` | 同段对话多次评分稳定性 ±1 分 |
-| P4 | Persona 工厂 + CustomerState | 配置化生成多种客户画像 + 运行时客户状态 | `python scripts/demo_p4.py` | 一份 yaml 能生成 5+ 种 persona，且客户信息披露/隐藏关切按状态逐步推进 |
+| P4 | Persona 工厂 + CustomerState | 配置化生成多种客户画像 + 运行时客户状态 | `python scripts/demo_p4.py` | 一组 yaml 能生成 5+ 种 persona，且客户信息披露/隐藏关切按状态逐步推进 |
 | P5 | 产品 RAG | 接入条款/合规知识库，AI 客户问条款不胡编 | `python scripts/demo_p5.py` | 故意问条款细节，回答能溯源到知识库 |
 | P6 | Web UI + 报告 | 浏览器里完成陪练并看到可视化报告 | `npm run dev` 或 `python -m peilian.server` | 端到端跑通，雷达图/逐句标注可见 |
 | P7 | 错题本 + 自适应难度 | 多次训练后系统能推荐弱项专项练习 | `python scripts/demo_p7.py` | 连续 3 次对某场景扣分，下次自动加大该场景比重 |
@@ -113,7 +113,7 @@
 - 保持状态观察与场景控制边界：CustomerState 只约束“可说/不可说/说到什么程度”，不按剧本强行推进话题
 
 **验收摘要**：
-- 一份 yaml 能生成 5+ 种行为差异可观测的 persona
+- 一组 yaml 能生成 5+ 种行为差异可观测的 persona
 - 难度档切换会显著改变客户行为（坚持度、信息隐藏度等）
 - 同一轮陪练中，客户不会重复遗忘已披露信息；hidden_concerns 能按未触发→已触发→暗示→表达的节奏逐步释放
 - 面对泛泛提问时客户保持模糊或反问；面对明确点名问题时只回答被问到的那一项
