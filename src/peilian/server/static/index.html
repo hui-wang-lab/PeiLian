@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PeiLian 陪练系统</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="brand">
+    <span class="logo">P</span>
+    <span>PeiLian 陪练系统</span>
+  </div>
+  <div class="nav-links">
+    <a href="/" class="active">首页</a>
+  </div>
+  <div class="spacer"></div>
+</nav>
+
+<div class="container">
+  <!-- Hero -->
+  <section class="hero fade-in">
+    <span class="eyebrow"><span class="dot"></span>寿险代理人 · 文本陪练</span>
+    <h1>用 AI 客户，把每一次销售对话练到位</h1>
+    <p>从 KYC 挖需到产品讲解、异议处理、促成全流程；客户严格被动反应，结束后输出五维评估与逐句标注，帮你看清自己每一句话的得失。</p>
+    <div class="feature-tags">
+      <span>FORM 必问点覆盖</span>
+      <span>合规红线扫描</span>
+      <span>LLM-as-Judge 评分</span>
+      <span>多 Persona × 三档难度</span>
+    </div>
+  </section>
+
+  <!-- Persona 选择 -->
+  <div class="card fade-in">
+    <h2>选择客户画像</h2>
+    <p class="card-subtitle">每位客户都有独立的家庭背景、隐藏关切与坚持度，挑一位开始练习。</p>
+    <div id="persona-grid" class="persona-grid">
+      <div class="empty-state"><span class="loading"></span> 加载客户画像中...</div>
+    </div>
+  </div>
+
+  <!-- 难度选择 -->
+  <div class="card fade-in">
+    <h2>选择陪练难度</h2>
+    <p class="card-subtitle">难度档影响客户的坚持度、信息隐藏程度与异议强度。</p>
+    <div class="difficulty-group" id="difficulty-group">
+      <label class="difficulty-option" data-level="easy">
+        <input type="radio" name="difficulty" value="easy">
+        <div class="level">简单</div>
+        <div class="desc">客户配合度高，回答较直接，适合熟悉流程</div>
+      </label>
+      <label class="difficulty-option checked" data-level="medium">
+        <input type="radio" name="difficulty" value="medium" checked>
+        <div class="level">中等</div>
+        <div class="desc">客户略有戒备，会自然反问，标准训练强度</div>
+      </label>
+      <label class="difficulty-option" data-level="hard">
+        <input type="radio" name="difficulty" value="hard">
+        <div class="level">困难</div>
+        <div class="desc">客户坚持度高，异议密集，挑战话术抗压力</div>
+      </label>
+    </div>
+    <button id="start-btn" class="btn btn-primary btn-lg btn-block" disabled>请先选择一位客户</button>
+  </div>
+</div>
+
+<script>
+  let selectedPersona = null;
+
+  // 取姓名首字作头像（中文取最后一个字，英文取首字母），避免按"姓"重复
+  function avatarChar(name) {
+    if (!name) return '?';
+    const trimmed = name.trim();
+    // 中文：去掉常见称谓后取名的第一个字
+    const stripped = trimmed.replace(/^(张|王|李|赵|刘|陈|杨|黄|周|吴|徐|孙|马|朱|胡|郭|何|林|高|罗)/, '');
+    return (stripped || trimmed).slice(0, 1).toUpperCase();
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text == null ? '' : String(text);
+    return div.innerHTML;
+  }
+
+  async function loadPersonas() {
+    const grid = document.getElementById('persona-grid');
+    try {
+      const resp = await fetch('/api/personas');
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const personas = await resp.json();
+      if (!personas.length) {
+        grid.innerHTML = '<div class="empty-state">暂无客户画像</div>';
+        return;
+      }
+      grid.innerHTML = personas.map(p => `
+        <div class="persona-card" data-id="${escapeHtml(p.id)}" role="button" tabindex="0">
+          <div class="check">✓</div>
+          <div class="header">
+            <div class="avatar">${escapeHtml(avatarChar(p.name))}</div>
+            <div>
+              <div class="name">${escapeHtml(p.name)}</div>
+              <div class="meta">${escapeHtml(p.age)} 岁 · ${escapeHtml(p.occupation)}</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div><span class="label">家庭：</span>${escapeHtml(p.family || '—')}</div>
+          </div>
+          <div class="info-row">
+            <div><span class="label">收入：</span>${escapeHtml(p.income_level || '—')}</div>
+          </div>
+          ${p.hidden_concerns_labels && p.hidden_concerns_labels.length ? `
+            <div class="concerns">
+              ${p.hidden_concerns_labels.map(c => `<span>${escapeHtml(c)}</span>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+
+      // 绑定点击 / 键盘选择
+      grid.querySelectorAll('.persona-card').forEach(card => {
+        const id = card.getAttribute('data-id');
+        card.addEventListener('click', () => selectPersona(id));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectPersona(id);
+          }
+        });
+      });
+    } catch (e) {
+      grid.innerHTML = '<div class="empty-state">加载失败：' + escapeHtml(e.message) + '</div>';
+    }
+  }
+
+  function selectPersona(id) {
+    selectedPersona = id;
+    document.querySelectorAll('.persona-card').forEach(c => c.classList.remove('selected'));
+    const target = document.querySelector(`.persona-card[data-id="${id}"]`);
+    if (target) target.classList.add('selected');
+    const btn = document.getElementById('start-btn');
+    btn.disabled = false;
+    btn.textContent = '开始陪练 →';
+  }
+
+  // 难度卡片样式同步
+  document.querySelectorAll('.difficulty-option').forEach(opt => {
+    const radio = opt.querySelector('input');
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('.difficulty-option').forEach(o => o.classList.remove('checked'));
+      opt.classList.add('checked');
+      radio.checked = true;
+    });
+  });
+
+  document.getElementById('start-btn').addEventListener('click', async () => {
+    if (!selectedPersona) return;
+    const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
+    const btn = document.getElementById('start-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading"></span> 创建中...';
+    try {
+      const resp = await fetch('/api/sessions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ persona_id: selectedPersona, difficulty })
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        alert('创建失败：' + (err.detail || resp.statusText));
+        btn.disabled = false;
+        btn.textContent = '开始陪练 →';
+        return;
+      }
+      const data = await resp.json();
+      window.location.href = '/chat.html?session=' + data.session_id;
+    } catch (e) {
+      alert('网络错误：' + e.message);
+      btn.disabled = false;
+      btn.textContent = '开始陪练 →';
+    }
+  });
+
+  loadPersonas();
+</script>
+</body>
+</html>

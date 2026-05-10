@@ -173,6 +173,36 @@ CLI 内可用命令：
 
 ---
 
+## P5 Demo — Web UI + 可视化报告
+
+```powershell
+# 1. 安装含 dev 依赖（首次或更新依赖时执行）
+pip install -e ".[dev]"
+
+# 2. 确保 .env 已配置 OPENAI_API_KEY
+
+# 3. 启动 Web 服务
+python -m peilian.server
+
+# 4. 浏览器打开
+# http://localhost:8000
+
+# 5. 跑测试（P5 API 测试使用 mock client，不烧 LLM 额度）
+pytest
+```
+
+P5 采用 FastAPI 后端 + 轻量 HTML/JS + ECharts 前端：在浏览器里选择 persona 和难度、完成聊天式陪练，并在结束后查看五维雷达图、逐句 KYC 标注与合规红线扫描。后端 API 文档自动生成在 `http://localhost:8000/docs`。
+
+Web 服务参数：
+
+```
+python -m peilian.server                          # 默认 127.0.0.1:8000
+python -m peilian.server --host 0.0.0.0 --port 8080  # 开放外网 + 自定义端口
+python -m peilian.server --reload                  # 开发热重载
+```
+
+---
+
 ## 项目地图
 
 | 文件 | 用途 |
@@ -187,6 +217,6 @@ CLI 内可用命令：
 
 ## 当前阶段
 
-🚩 **P4 — Persona 工厂 + CustomerState**（详见 [`docs/phases/phase-4.md`](docs/phases/phase-4.md)）
+🚩 **P5 — Web UI + 报告**（详见 [`docs/phases/phase-5.md`](docs/phases/phase-5.md)）
 
 阶段切换由用户显式确认；不会自动推进到下一阶段。

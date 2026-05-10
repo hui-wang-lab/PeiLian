@@ -106,3 +106,15 @@ def test_render_has_opening_turn_guidance():
         f"prompt 应包含针对开场/首次回应的特别约束；"
         f"未命中任何候选关键字={opening_markers}"
     )
+
+
+def test_render_forbids_stage_directions():
+    """客户回复只能是口语，不应含动作/神态旁白。"""
+    from peilian.persona import SAMPLE_PERSONA
+    from peilian.prompts import render_customer_system_prompt
+    from peilian.scenario import SAMPLE_SCENARIO
+
+    output = render_customer_system_prompt(SAMPLE_PERSONA, SAMPLE_SCENARIO)
+    required_terms = ["只输出客户说出口的话", "不要写动作", "神态", "括号"]
+    missing = [term for term in required_terms if term not in output]
+    assert not missing, f"prompt 缺少去舞台提示约束：{missing}"

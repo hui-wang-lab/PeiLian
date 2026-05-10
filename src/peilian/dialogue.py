@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from openai import OpenAI
@@ -8,6 +9,14 @@ from .config import Settings
 from .persona import Persona
 from .prompts import render_customer_system_prompt
 from .scenario import Scenario
+
+
+_LEADING_STAGE_DIRECTION_RE = re.compile(r"^\s*(?:[（(][^（）()\n]{1,80}[）)]\s*)+")
+
+
+def strip_stage_directions(text: str) -> str:
+    """去掉回复开头的动作/神态舞台提示，保留真正说出口的话。"""
+    return _LEADING_STAGE_DIRECTION_RE.sub("", text).strip()
 
 
 class Dialogue:
@@ -73,7 +82,7 @@ class Dialogue:
             messages=self.messages,
             temperature=0.7,
         )
-        answer = response.choices[0].message.content or ""
+        answer = strip_stage_directions(response.choices[0].message.content or "")
         self.messages.append({"role": "assistant", "content": answer})
 
         # P4: 生成后更新 CustomerState 并同步 messages[0]

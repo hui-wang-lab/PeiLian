@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>陪练对话 — PeiLian</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="brand">
+    <span class="logo">P</span>
+    <span>PeiLian 陪练系统</span>
+  </div>
+  <div class="nav-links">
+    <a href="/">首页</a>
+  </div>
+  <div class="spacer"></div>
+  <button id="end-btn" class="btn btn-danger">结束对话 · 查看报告</button>
+</nav>
+
+<div class="chat-layout">
+  <!-- 客户信息条 -->
+  <div class="session-bar">
+    <div id="session-avatar" class="avatar">·</div>
+    <div class="info">
+      <div class="name">
+        <span id="persona-name">加载中...</span>
+        <span class="status-dot" title="对话进行中"></span>
+      </div>
+      <div id="persona-meta" class="meta">连接中...</div>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="num" id="stat-turns">0</div>
+        <div class="lbl">已发起轮次</div>
+      </div>
+      <div class="stat">
+        <div class="num" id="stat-difficulty">—</div>
+        <div class="lbl">难度</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 消息流 -->
+  <div id="messages" class="chat-messages">
+    <div id="empty-state" class="chat-empty">
+      <div class="chat-empty-icon">👋</div>
+      <div class="chat-empty-title">由你来开场</div>
+      <div class="chat-empty-desc">
+        你是寿险代理人，先和客户打招呼、自我介绍或切入话题。<br>
+        AI 客户会严格按真实场景被动反应——你不问，TA 就不会主动告诉你。
+      </div>
+      <div class="chat-empty-tips">
+        <div class="tip-item"><span class="tip-num">1</span>建议从破冰寒暄开始（FORM：家庭/职业/兴趣/财务）</div>
+        <div class="tip-item"><span class="tip-num">2</span>挖完需求再切入产品讲解，避免上来就推销</div>
+        <div class="tip-item"><span class="tip-num">3</span>注意合规红线：不要承诺收益、不要与存款做误导对比</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 输入区 -->
+  <div class="chat-input-area">
+    <div class="input-row">
+      <input id="msg-input" type="text" placeholder="输入你作为代理人的开场或下一句话术..." autocomplete="off">
+      <button id="send-btn" class="btn btn-primary">发送</button>
+    </div>
+    <div class="hint">按 <kbd>Enter</kbd> 发送 · <kbd>Shift</kbd>+<kbd>Enter</kbd> 换行</div>
+  </div>
+</div>
+
+<script src="/js/chat.js"></script>
+</body>
+</html>
