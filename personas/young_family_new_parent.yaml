@@ -1,0 +1,23 @@
+name: "小陈"
+age: 28
+occupation: "互联网公司产品经理"
+family: "新婚，孩子刚出生"
+income_level: "中等偏上"
+existing_coverage:
+  - "百万医疗险"
+  - "社保"
+pain_points:
+  - "刚有了孩子，突然觉得需要保障但又不知从何开始"
+  - "预算有限，房贷加育儿开销大"
+hidden_concerns:
+  - key: low_budget
+    label: "预算紧张，怕保费压力太大"
+    keywords: ["预算", "压力", "贵", "负担", "开销", "房贷"]
+    initial_stage: untouched
+  - key: procrastination
+    label: "总觉得还年轻，不急，想再看看"
+    keywords: ["急", "以后再说", "再看看", "不着急", "还年轻"]
+    initial_stage: untouched
+persistence: 0.5
+expressiveness: 0.7
+initial_mood: "好奇但犹豫"

@@ -22,6 +22,8 @@ class Dialogue:
         persona: Persona,
         scenario: Scenario,
         settings: Settings,
+        *,
+        persona_meta: Any = None,
     ) -> None:
         if not settings.api_key:
             raise RuntimeError(
@@ -32,15 +34,40 @@ class Dialogue:
             base_url=settings.base_url,
         )
         self._model = settings.model or "gpt-4o-mini"
-        self._system_prompt = render_customer_system_prompt(persona, scenario)
+        self._persona = persona
+        self._scenario = scenario
+        self._persona_meta = persona_meta
+
+        # P4: CustomerState 初始化（仅当传入 persona_meta）
+        if persona_meta is not None:
+            from .customer_state import CustomerState
+            self._customer_state: CustomerState | None = CustomerState.initial(
+                persona, persona_meta
+            )
+        else:
+            self._customer_state = None
+
         self.messages: list[dict[str, Any]] = [
-            {"role": "system", "content": self._system_prompt}
+            {"role": "system", "content": self._render_system_prompt()}
         ]
-        # P2: observer hooks can be added around message handling later.
+
+    def _render_system_prompt(self) -> str:
+        """每轮调用前重新渲染，注入 state_summary（P4）。"""
+        summary = ""
+        if self._customer_state is not None and self._persona_meta is not None:
+            from .state_summary import render_state_summary
+            summary = render_state_summary(
+                self._customer_state, self._persona, self._persona_meta
+            )
+        return render_customer_system_prompt(
+            self._persona, self._scenario, state_summary=summary
+        )
 
     def send_user(self, text: str) -> str:
+        # P4: 每轮调用前刷新 system prompt
+        self.messages[0] = {"role": "system", "content": self._render_system_prompt()}
+
         self.messages.append({"role": "user", "content": text})
-        # P2: pre-message observer hook would go here.
         response = self._client.chat.completions.create(
             model=self._model,
             messages=self.messages,
@@ -48,8 +75,34 @@ class Dialogue:
         )
         answer = response.choices[0].message.content or ""
         self.messages.append({"role": "assistant", "content": answer})
-        # P2: post-message observer hook would go here.
+
+        # P4: 生成后更新 CustomerState 并同步 messages[0]
+        if self._customer_state is not None and self._persona_meta is not None:
+            from .customer_state import update_state
+            self._customer_state = update_state(
+                self._customer_state,
+                text,
+                answer,
+                persona=self._persona,
+                persona_meta=self._persona_meta,
+            )
+            self.messages[0] = {
+                "role": "system",
+                "content": self._render_system_prompt(),
+            }
+
         return answer
 
     def reset(self) -> None:
-        self.messages = [{"role": "system", "content": self._system_prompt}]
+        # P4: 同步重置 customer_state
+        if self._persona_meta is not None:
+            from .customer_state import CustomerState
+            self._customer_state = CustomerState.initial(
+                self._persona, self._persona_meta
+            )
+        self.messages = [{"role": "system", "content": self._render_system_prompt()}]
+
+    @property
+    def customer_state(self) -> Any | None:
+        """P4: 只读属性，返回当前 CustomerState。"""
+        return self._customer_state

@@ -1,0 +1,23 @@
+name: "李总"
+age: 42
+occupation: "小型贸易公司老板"
+family: "已婚，两个孩子在读初中"
+income_level: "中高"
+existing_coverage:
+  - "社保"
+  - "公司给高管买了意外险"
+pain_points:
+  - "对保险代理人有戒备心，觉得都是来推销的"
+  - "朋友曾被误导买过不合适的产品"
+hidden_concerns:
+  - key: distrust_industry
+    label: "不信任保险行业，觉得代理人只为佣金"
+    keywords: ["佣金", "推销", "骗", "坑", "套路", "业绩"]
+    initial_stage: untouched
+  - key: peer_comparison
+    label: "喜欢拿同业产品做对比"
+    keywords: ["对比", "别家", "其他公司", "哪家更好", "别人家"]
+    initial_stage: untouched
+persistence: 0.8
+expressiveness: 0.4
+initial_mood: "谨慎，略带审视"

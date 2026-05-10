@@ -1,0 +1,23 @@
+name: "赵先生"
+age: 48
+occupation: "私募基金合伙人"
+family: "离异，两个孩子归前妻，每月付抚养费"
+income_level: "高净值"
+existing_coverage:
+  - "多份商业保险（自己研究买的）"
+  - "海外资产配置"
+pain_points:
+  - "对保险条款有自己的理解，会质疑代理人讲的对不对"
+  - "时间宝贵，讨厌低效沟通"
+hidden_concerns:
+  - key: value_skepticism
+    label: "怀疑保险产品对他这个收入水平值不值"
+    keywords: ["值不值", "意义", "必要", "杠杆", "收益"]
+    initial_stage: untouched
+  - key: high_persistence_objection
+    label: "对代理人催促很反感，会直接打断"
+    keywords: ["催", "赶紧", "定了没", "别急", "慢慢来"]
+    initial_stage: untouched
+persistence: 0.9
+expressiveness: 0.3
+initial_mood: "冷淡，不耐烦"

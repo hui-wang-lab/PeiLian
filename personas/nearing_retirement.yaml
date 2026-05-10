@@ -1,0 +1,24 @@
+name: "王阿姨"
+age: 55
+occupation: "国企财务，还有 5 年退休"
+family: "已婚，孩子已成年独立"
+income_level: "中产稳定"
+existing_coverage:
+  - "社保"
+  - "企业年金"
+  - "早年买过一份重疾险"
+pain_points:
+  - "对养老质量有期待，但不确定现有保障够不够"
+  - "不想给孩子添负担"
+hidden_concerns:
+  - key: existing_coverage_overlap
+    label: "担心现有保障和新的重叠，白花钱"
+    keywords: ["重叠", "重复", "白买", "已有的", "够不够"]
+    initial_stage: untouched
+  - key: future_plan_hesitation
+    label: "对退休后规划犹豫，不确定要不要现在买"
+    keywords: ["退休", "现在买", "划算", "年龄", "晚了"]
+    initial_stage: untouched
+persistence: 0.6
+expressiveness: 0.6
+initial_mood: "温和，愿意聊但不急"

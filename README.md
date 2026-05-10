@@ -126,6 +126,53 @@ pytest
 
 ---
 
+## P4 Demo — Persona 工厂 + CustomerState
+
+```powershell
+# 1. 安装含 dev 依赖（首次或更新依赖时执行）
+pip install -e ".[dev]"
+
+# 2. 确保 .env 已配置 OPENAI_API_KEY
+
+# 3. 进入交互式陪练（列出 persona 让你选择）
+python scripts/demo_p4.py
+
+# 4. 直接指定 persona 和难度
+python scripts/demo_p4.py --persona price_sensitive_midcareer --difficulty hard
+
+# 5. 跑测试
+pytest
+```
+
+`personas/` 目录下预置了 5 份客户画像 yaml，覆盖不同年龄 / 收入 / 坚持度 / 隐藏关切组合：
+
+| 文件 | 核心特征 | 坚持度 |
+|---|---|---|
+| `price_sensitive_midcareer.yaml` | 价格敏感中年 | 0.7 |
+| `trust_issue_sme_owner.yaml` | 小企业主信任问题 | 0.8 |
+| `young_family_new_parent.yaml` | 年轻新父母 | 0.5 |
+| `nearing_retirement.yaml` | 临近退休 | 0.6 |
+| `high_net_worth_skeptic.yaml` | 高净值怀疑型 | 0.9 |
+
+每份 persona 支持三档难度：
+
+| 难度 | 坚持度缩放 | 表达直接度缩放 | 行为特征 |
+|---|---|---|---|
+| easy | × 0.5 | × 1.3 | 容易被说服，信息主动度略高 |
+| medium | × 1.0 | × 1.0 | 标准行为 |
+| hard | × 1.3 | × 0.7 | 不易被说服，信息隐藏度更高 |
+
+CLI 内可用命令：
+
+| 命令 | 作用 |
+|---|---|
+| `/quit` | 退出并打印 CustomerState 变化日志 |
+| `/reset` | 清空对话历史并重新开始 |
+
+**人工观察项**：跑同一份 persona 的 easy 与 hard 档，客户回答风格能感觉到差异（坚持度、信息隐藏度）。
+
+---
+
 ## 项目地图
 
 | 文件 | 用途 |

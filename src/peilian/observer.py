@@ -67,14 +67,27 @@ def evaluate(messages: list[dict[str, Any]]) -> EvaluationReport:
 # ---------------------------------------------------------------------------
 # 内部扫描器
 # ---------------------------------------------------------------------------
-def _scan_mandatory(content: str, covered: set[str]) -> None:
+# ---------------------------------------------------------------------------
+# 公开纯函数：P2 内部使用 + P4 复用
+# ---------------------------------------------------------------------------
+def match_mandatory_categories(text: str) -> frozenset[str]:
+    """扫描文本，返回命中的必问点类别 ID 集合（纯函数）。
+
+    基于 MANDATORY_QUESTION_RULES 的关键词子串匹配。
+    P2 的 _scan_mandatory 内部调用此函数，P4 的 CustomerState 也复用此函数。
+    """
+    covered: set[str] = set()
     for category, keywords in MANDATORY_QUESTION_RULES.items():
-        if category in covered:
-            continue
         for kw in keywords:
-            if kw in content:
+            if kw in text:
                 covered.add(category)
                 break
+    return frozenset(covered)
+
+
+def _scan_mandatory(content: str, covered: set[str]) -> None:
+    for category in match_mandatory_categories(content):
+        covered.add(category)
 
 
 def _scan_compliance(

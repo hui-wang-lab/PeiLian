@@ -1,0 +1,22 @@
+name: "张先生"
+age: 35
+occupation: "IT 公司中层"
+family: "已婚，一个 5 岁孩子"
+income_level: "中产"
+existing_coverage:
+  - "百万医疗险（公司团险）"
+pain_points:
+  - "对保险了解不深"
+  - "时间紧、希望直接说重点"
+hidden_concerns:
+  - key: price_sensitive
+    label: "担心保费太贵影响房贷"
+    keywords: ["价格", "保费", "预算", "房贷", "贵"]
+    initial_stage: untouched
+  - key: refuse_long_health_disclosure
+    label: "不希望做太详细的健康告知"
+    keywords: ["健康告知", "体检", "病史", "问太细"]
+    initial_stage: untouched
+persistence: 0.7
+expressiveness: 0.5
+initial_mood: "略微戒备但礼貌"

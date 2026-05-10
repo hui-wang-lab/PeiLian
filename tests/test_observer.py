@@ -155,3 +155,53 @@ def test_observer_is_isolated_from_dialogue_layer():
     assert "import peilian.dialogue" not in source
     assert "import openai" not in source
     assert "from openai" not in source
+
+
+# ---------------------------------------------------------------------------
+# P4 兼容守护：match_mandatory_categories 与 _scan_mandatory 等价
+# ---------------------------------------------------------------------------
+# phase-4.md §6 / 实施任务 #2 要求：将 _scan_mandatory 核心提取为公开纯函数
+# match_mandatory_categories 后，对既有 P2 关键词应返回与 _scan_mandatory 等价的
+# category 集合。本组测试防止 observer 重构悄悄改 P2 行为。
+
+def test_match_mandatory_categories_equivalent_to_scan_mandatory():
+    """match_mandatory_categories 与 _scan_mandatory 在等价输入上结果一致。"""
+    from peilian.observer import _scan_mandatory, match_mandatory_categories
+
+    samples = [
+        "",
+        "您家里几口人，几个孩子？",
+        "请问您是做什么的？",
+        "您家庭年收入大概多少？",
+        "您之前买过什么保险吗？",
+        "您对未来有什么规划吗？",
+        "您身体怎么样，做过手术吗？",
+        "您家里几口人？年收入多少？身体怎么样？",
+        "今天天气不错。",
+        "保险保险保险",
+    ]
+    for text in samples:
+        covered: set[str] = set()
+        _scan_mandatory(text, covered)
+        assert frozenset(covered) == match_mandatory_categories(text), (
+            f"对文本 {text!r}，_scan_mandatory 与 match_mandatory_categories 结果不一致"
+        )
+
+
+def test_match_mandatory_categories_returns_frozenset():
+    """返回 frozenset（保证可作为 frozen dataclass 字段值）。"""
+    from peilian.observer import match_mandatory_categories
+
+    result = match_mandatory_categories("您家里几口人？")
+    assert isinstance(result, frozenset)
+    assert "family_structure" in result
+
+
+def test_match_mandatory_categories_does_not_mutate_input():
+    """纯函数，不影响外部状态。"""
+    from peilian.observer import match_mandatory_categories
+
+    text = "您家里几口人？"
+    snapshot = text
+    _ = match_mandatory_categories(text)
+    assert text == snapshot
