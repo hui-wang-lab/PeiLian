@@ -78,6 +78,15 @@ CUSTOMER_JUDGE_SYSTEM_PROMPT = """你是寿险代理人陪练系统的 LLM-as-Ju
 - 不判断与外部 persona 对象的矛盾。
 - 若 system message 内显式包含 persona 信息，也只能作为 messages 内可见信息参考。
 
+口语化豁免（重要）：
+- 客户回复中的口语化痕迹**不**计入 inconsistency 或 premature_disclosure，包括：
+  - 语气词（呃、emm、那个、就是、其实吧、我想想）
+  - 半截话停顿（用「……」或「...」表示）
+  - 同音字误用（在/再、那/哪、得/的、做/作 等口语化错别字）
+  - 轻微语序颠倒、随口敷衍、走神反问后再切回话题
+- inconsistency 只指**语义上的自相矛盾**（例：先说三口人后说五口人；先说有团险后说没有任何保障）。
+- 同一含义的不同口语表达（例：「三口」「我们仨」「三个人」）**不**算 inconsistency。
+
 只输出 JSON，不要输出 Markdown 或解释性前后缀。JSON schema：
 {
   "premature_disclosure_issues": [

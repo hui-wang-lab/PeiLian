@@ -2,15 +2,33 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from fastapi import APIRouter, HTTPException, Response
 
 from peilian.config import load_settings
 from peilian.persona_factory import get_persona_meta, load_persona_from_yaml
+from peilian.scenario_factory import find_scenario_by_id
 
 from ..schemas import CreateSessionRequest, SessionResponse
 from ..session_store import SessionData, get_session_store
 
 router = APIRouter(prefix="/api/sessions", tags=["sessions"])
+
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
+_PERSONAS_DIR = _PROJECT_ROOT / "personas"
+_SCENARIOS_DIR = _PROJECT_ROOT / "scenarios"
+
+
+def _find_persona_yaml(persona_id: str) -> Path | None:
+    """内置目录优先，然后 _user/。"""
+    builtin = _PERSONAS_DIR / f"{persona_id}.yaml"
+    if builtin.exists():
+        return builtin
+    user = _PERSONAS_DIR / "_user" / f"{persona_id}.yaml"
+    if user.exists():
+        return user
+    return None
 
 
 @router.post("", response_model=SessionResponse, status_code=201)
@@ -22,12 +40,11 @@ def create_session(req: CreateSessionRequest) -> SessionResponse:
             detail="未检测到 OPENAI_API_KEY；请在 .env 中配置后重试。",
         )
 
-    from pathlib import Path
-
-    personas_dir = Path(__file__).resolve().parent.parent.parent.parent.parent / "personas"
-    yaml_path = personas_dir / f"{req.persona_id}.yaml"
-    if not yaml_path.exists():
-        raise HTTPException(status_code=404, detail=f"Persona '{req.persona_id}' not found")
+    yaml_path = _find_persona_yaml(req.persona_id)
+    if yaml_path is None:
+        raise HTTPException(
+            status_code=404, detail=f"Persona '{req.persona_id}' not found"
+        )
 
     try:
         persona = load_persona_from_yaml(str(yaml_path), difficulty=req.difficulty)
@@ -35,8 +52,22 @@ def create_session(req: CreateSessionRequest) -> SessionResponse:
     except Exception as e:
         raise HTTPException(status_code=422, detail=str(e))
 
+    found = find_scenario_by_id(req.scenario_id, base_dir=_SCENARIOS_DIR)
+    if found is None:
+        raise HTTPException(
+            status_code=404, detail=f"Scenario '{req.scenario_id}' not found"
+        )
+    scenario, _meta = found
+
     store = get_session_store()
-    session_id = store.create(persona, persona_meta, req.difficulty, settings)
+    session_id = store.create(
+        persona,
+        persona_meta,
+        req.difficulty,
+        settings,
+        scenario=scenario,
+        scenario_id=req.scenario_id,
+    )
 
     return SessionResponse(
         session_id=session_id,

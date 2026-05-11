@@ -21,3 +21,4 @@ hidden_concerns:
 persistence: 0.9
 expressiveness: 0.3
 initial_mood: "冷淡，不耐烦"
+colloquial_style: mild

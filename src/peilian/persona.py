@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+VALID_COLLOQUIAL_STYLES = frozenset({"off", "mild", "heavy"})
+
 
 @dataclass(frozen=True)
 class Persona:
@@ -16,6 +18,7 @@ class Persona:
     persistence: float
     expressiveness: float
     initial_mood: str
+    colloquial_style: str = "off"
 
     def __post_init__(self) -> None:
         if not 0.0 <= self.persistence <= 1.0:
@@ -25,6 +28,12 @@ class Persona:
         if not 0.0 <= self.expressiveness <= 1.0:
             raise ValueError(
                 f"expressiveness must be in [0, 1], got {self.expressiveness!r}"
+            )
+        if self.colloquial_style not in VALID_COLLOQUIAL_STYLES:
+            raise ValueError(
+                f"colloquial_style must be one of "
+                f"{sorted(VALID_COLLOQUIAL_STYLES)}, "
+                f"got {self.colloquial_style!r}"
             )
 
 
@@ -46,4 +55,5 @@ SAMPLE_PERSONA = Persona(
     persistence=0.7,
     expressiveness=0.5,
     initial_mood="略微戒备但礼貌",
+    colloquial_style="off",
 )

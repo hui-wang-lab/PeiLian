@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from peilian.dialogue import Dialogue
     from peilian.persona import Persona
     from peilian.persona_factory import PersonaMeta
+    from peilian.scenario import Scenario
 
     from .schemas import ReportResponse
 
@@ -28,6 +29,7 @@ class SessionData:
     persona_meta: PersonaMeta
     difficulty: str
     created_at: datetime
+    scenario_id: str = "office_first_meet"
     status: str = "active"
     cached_report: ReportResponse | None = None
     lock: threading.Lock = field(default_factory=threading.Lock)
@@ -46,13 +48,18 @@ class SessionStore:
         persona_meta: PersonaMeta,
         difficulty: str,
         settings: Settings,
+        *,
+        scenario: Scenario | None = None,
+        scenario_id: str = "office_first_meet",
     ) -> str:
         from peilian.dialogue import Dialogue
         from peilian.scenario import SAMPLE_SCENARIO
 
+        active_scenario = scenario if scenario is not None else SAMPLE_SCENARIO
+
         session_id = uuid4().hex[:8]
         dialogue = Dialogue(
-            persona, SAMPLE_SCENARIO, settings, persona_meta=persona_meta
+            persona, active_scenario, settings, persona_meta=persona_meta
         )
         data = SessionData(
             dialogue=dialogue,
@@ -60,6 +67,7 @@ class SessionStore:
             persona_meta=persona_meta,
             difficulty=difficulty,
             created_at=datetime.now(),
+            scenario_id=scenario_id,
         )
         with self._lock:
             self._sessions[session_id] = data

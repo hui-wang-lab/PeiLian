@@ -46,6 +46,36 @@ def test_load_all_five_personas_from_dir():
             assert "initial_stage" in hc
 
 
+def test_load_personas_include_user_is_explicit(tmp_path: Path):
+    """默认仅加载内置目录；Web 需要 _user 时显式 include_user=True。"""
+    sample = """
+name: "测试客户"
+age: 30
+occupation: "测试"
+family: "已婚"
+income_level: "中等"
+existing_coverage: ["社保"]
+pain_points: ["忙"]
+hidden_concerns:
+  - key: test_concern
+    label: "测试关切"
+    keywords: ["test"]
+    initial_stage: untouched
+persistence: 0.5
+expressiveness: 0.5
+initial_mood: "正常"
+"""
+    (tmp_path / "builtin.yaml").write_text(sample, encoding="utf-8")
+    (tmp_path / "_user").mkdir()
+    (tmp_path / "_user" / "custom.yaml").write_text(
+        sample.replace("测试客户", "自定义客户"),
+        encoding="utf-8",
+    )
+
+    assert len(load_personas_from_dir(str(tmp_path))) == 1
+    assert len(load_personas_from_dir(str(tmp_path), include_user=True)) == 2
+
+
 def _write_temp_yaml(content):
     """写入临时文件并返回路径（调用方负责删除）。"""
     f = tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False, encoding="utf-8")

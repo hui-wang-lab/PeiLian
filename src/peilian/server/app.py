@@ -7,7 +7,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from .routes import chat, personas, report, session
+from .routes import chat, personas, report, scenarios, session
 
 _STATIC_DIR = Path(__file__).resolve().parent / "static"
 
@@ -20,6 +20,7 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(personas.router)
+    app.include_router(scenarios.router)
     app.include_router(session.router)
     app.include_router(chat.router)
     app.include_router(report.router)

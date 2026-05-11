@@ -22,3 +22,4 @@ hidden_concerns:
 persistence: 0.6
 expressiveness: 0.6
 initial_mood: "温和，愿意聊但不急"
+colloquial_style: mild

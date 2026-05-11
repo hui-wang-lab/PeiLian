@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新建客户 · PeiLian</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="brand">
+    <span class="logo">P</span>
+    <span>PeiLian 陪练系统</span>
+  </div>
+  <div class="nav-links">
+    <a href="/">首页</a>
+    <a href="/persona_form.html" class="active">+ 新建客户</a>
+    <a href="/scenario_form.html">+ 新建场景</a>
+  </div>
+  <div class="spacer"></div>
+</nav>
+
+<div class="form-page-container">
+  <a class="form-back" href="/">← 返回首页</a>
+
+  <div class="card fade-in">
+    <h2>新建自定义客户画像</h2>
+    <p class="card-subtitle">从一个常见客户模板开始，改几项关键信息即可。提交后立即可在首页选用。</p>
+
+    <div id="form-banner" class="form-banner"></div>
+
+    <form id="persona-form" autocomplete="off">
+      <div class="form-field">
+        <label class="field-label">客户模板</label>
+        <div class="preset-grid" id="persona-preset-grid">
+          <button type="button" class="preset-option checked" data-preset="price_sensitive">
+            <span class="preset-title">预算敏感</span>
+            <span class="preset-desc">关心保费，担心影响家庭现金流</span>
+          </button>
+          <button type="button" class="preset-option" data-preset="trust_issue">
+            <span class="preset-title">信任不足</span>
+            <span class="preset-desc">怕被推销，对代理人较戒备</span>
+          </button>
+          <button type="button" class="preset-option" data-preset="busy_direct">
+            <span class="preset-title">忙碌直给</span>
+            <span class="preset-desc">时间少，愿意回答但不想绕弯</span>
+          </button>
+          <button type="button" class="preset-option" data-preset="high_net_worth">
+            <span class="preset-title">高净值怀疑</span>
+            <span class="preset-desc">要求高，容易质疑价值和专业度</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 基础信息 -->
+      <div class="form-row">
+        <div class="form-field">
+          <label class="field-label" for="f-id">客户编号</label>
+          <input type="text" id="f-id" name="id" placeholder="留空自动生成">
+          <div class="field-hint">可留空；系统会生成小写字母 / 数字 / 下划线编号。</div>
+        </div>
+        <div class="form-field">
+          <label class="field-label" for="f-name">姓名 / 称谓<span class="required">*</span></label>
+          <input type="text" id="f-name" name="name" placeholder="如 林先生" value="林先生" required>
+        </div>
+      </div>
+
+      <div class="form-row-3">
+        <div class="form-field">
+          <label class="field-label" for="f-age">年龄<span class="required">*</span></label>
+          <input type="number" id="f-age" name="age" min="0" max="120" value="38" required>
+        </div>
+        <div class="form-field">
+          <label class="field-label" for="f-occupation">职业<span class="required">*</span></label>
+          <input type="text" id="f-occupation" name="occupation" placeholder="如 小企业主" value="小企业主" required>
+        </div>
+        <div class="form-field">
+          <label class="field-label" for="f-income">收入档<span class="required">*</span></label>
+          <select id="f-income" name="income_level" required>
+            <option value="普通工薪">普通工薪</option>
+            <option value="中等" selected>中等</option>
+            <option value="中高收入">中高收入</option>
+            <option value="高净值">高净值</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label class="field-label" for="f-family">家庭情况<span class="required">*</span></label>
+        <input type="text" id="f-family" name="family" placeholder="如 已婚，一个 3 岁孩子" value="已婚，一个 6 岁孩子" required>
+      </div>
+
+      <div class="form-field">
+        <label class="field-label" for="f-mood">初始情绪<span class="required">*</span></label>
+        <input type="text" id="f-mood" name="initial_mood" placeholder="如 礼貌但有点心不在焉" value="礼貌但略微戒备" required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="field-label" for="f-coverage">已有保障</label>
+          <div class="tag-input-row" data-tag-target="existing_coverage">
+            <input type="text" placeholder="输入后回车或逗号分隔">
+          </div>
+          <div class="field-hint">如 "百万医疗险"、"重疾险（5 年前）"。</div>
+        </div>
+        <div class="form-field">
+          <label class="field-label" for="f-pain">公开关切 pain_points</label>
+          <div class="tag-input-row" data-tag-target="pain_points">
+            <input type="text" placeholder="输入后回车或逗号分隔">
+          </div>
+          <div class="field-hint">代理人问到时客户愿意自然表达的关切。</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="field-label" for="f-persistence">抗拒程度<span class="required">*</span> <span class="range-value" id="persistence-value">0.6</span></label>
+          <input type="range" id="f-persistence" name="persistence" min="0" max="1" step="0.1" value="0.6" required>
+          <div class="range-scale"><span>容易松动</span><span>很坚持</span></div>
+        </div>
+        <div class="form-field">
+          <label class="field-label" for="f-expressiveness">表达直接度<span class="required">*</span> <span class="range-value" id="expressiveness-value">0.5</span></label>
+          <input type="range" id="f-expressiveness" name="expressiveness" min="0" max="1" step="0.1" value="0.5" required>
+          <div class="range-scale"><span>话少含糊</span><span>回答完整</span></div>
+        </div>
+      </div>
+      <div class="difficulty-preview" id="difficulty-preview"></div>
+
+      <!-- 隐藏关切 -->
+      <div class="form-field">
+        <label class="field-label">内心顾虑<span class="required">*</span></label>
+        <div class="field-hint" style="margin-bottom:12px;">选择顾虑类型，再改一句具体担心即可；触发词会自动带入，也可以补充。</div>
+        <div id="concerns-list" class="hidden-concerns-list"></div>
+        <button type="button" class="add-concern-btn" id="add-concern-btn">+ 添加一条顾虑</button>
+      </div>
+
+      <!-- 口语化风格 -->
+      <div class="form-field">
+        <label class="field-label">口语化风格 colloquial_style<span class="required">*</span></label>
+        <div class="style-options" id="style-options">
+          <label class="style-option" data-value="off">
+            <input type="radio" name="colloquial_style" value="off">
+            <div class="style-name">off</div>
+            <div class="style-desc">完全规范，与 P5 默认一致；无语气词与停顿。</div>
+          </label>
+          <label class="style-option checked" data-value="mild">
+            <input type="radio" name="colloquial_style" value="mild" checked>
+            <div class="style-name">mild（推荐）</div>
+            <div class="style-desc">真人口语风：短句、语气词（呃 / emm）、轻停顿。</div>
+          </label>
+          <label class="style-option" data-value="heavy">
+            <input type="radio" name="colloquial_style" value="heavy">
+            <div class="style-name">heavy</div>
+            <div class="style-desc">mild 基础上偶尔同音字、敷衍、走神；高拟真。</div>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-field" style="display:flex; gap:12px; justify-content:flex-end;">
+        <a href="/" class="btn btn-outline">取消</a>
+        <button type="submit" id="submit-btn" class="btn btn-primary">保存并返回首页</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/js/persona_form.js"></script>
+</body>
+</html>

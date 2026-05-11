@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 # ---------------------------------------------------------------------------
@@ -15,10 +15,42 @@ from pydantic import BaseModel
 class CreateSessionRequest(BaseModel):
     persona_id: str
     difficulty: str = "medium"
+    scenario_id: str = "office_first_meet"
 
 
 class ChatRequest(BaseModel):
     message: str
+
+
+class HiddenConcernInput(BaseModel):
+    key: str
+    label: str
+    keywords: list[str]
+    initial_stage: str = "untouched"
+
+
+class CreatePersonaRequest(BaseModel):
+    id: str
+    name: str
+    age: int
+    occupation: str
+    family: str
+    income_level: str
+    existing_coverage: list[str] = Field(default_factory=list)
+    pain_points: list[str] = Field(default_factory=list)
+    hidden_concerns: list[HiddenConcernInput] = Field(default_factory=list)
+    persistence: float = 0.5
+    expressiveness: float = 0.5
+    initial_mood: str
+    colloquial_style: str = "off"
+
+
+class CreateScenarioRequest(BaseModel):
+    id: str
+    name: str
+    context: str
+    constraints: str
+    tags: list[str] = Field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
@@ -33,6 +65,17 @@ class PersonaSummary(BaseModel):
     family: str
     income_level: str
     hidden_concerns_labels: list[str]
+    colloquial_style: str = "off"
+    is_builtin: bool = True
+
+
+class ScenarioSummary(BaseModel):
+    id: str
+    name: str
+    context: str
+    constraints: str
+    tags: list[str] = Field(default_factory=list)
+    is_builtin: bool = True
 
 
 class SessionResponse(BaseModel):

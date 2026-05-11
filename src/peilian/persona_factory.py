@@ -10,7 +10,7 @@ from typing import Any
 
 import yaml
 
-from peilian.persona import Persona
+from peilian.persona import VALID_COLLOQUIAL_STYLES, Persona
 
 # ---------------------------------------------------------------------------
 # 常量与类型
@@ -128,6 +128,15 @@ def _validate_yaml_data(data: dict[str, Any]) -> None:
     if len(keys) != len(set(keys)):
         raise ValueError("Duplicate hidden_concern keys within the same persona")
 
+    # colloquial_style 可选；存在时校验取值
+    if "colloquial_style" in data:
+        style = data["colloquial_style"]
+        if style not in VALID_COLLOQUIAL_STYLES:
+            raise ValueError(
+                f"colloquial_style must be one of "
+                f"{sorted(VALID_COLLOQUIAL_STYLES)}, got {style!r}"
+            )
+
 
 # ---------------------------------------------------------------------------
 # 工厂函数
@@ -168,6 +177,7 @@ def load_persona_from_yaml(
         persistence=persistence,
         expressiveness=expressiveness,
         initial_mood=data["initial_mood"],
+        colloquial_style=data.get("colloquial_style", "off"),
     )
 
     _META_BY_PERSONA[persona] = PersonaMeta(
@@ -184,16 +194,32 @@ def load_personas_from_dir(
     dir_path: str = "personas",
     *,
     difficulty: str = "medium",
+    include_user: bool = False,
 ) -> list[Persona]:
-    """加载目录下所有 YAML，按难度档统一缩放。"""
+    """加载目录下所有 YAML，按难度档统一缩放。
+
+    P5.1 起额外扫描 `<dir_path>/_user/`，以支持 UI 自定义 persona。
+    Web 层需要自定义 persona 时显式传 `include_user=True`；
+    默认仅加载内置目录，保留 P0–P5 / CLI 兼容行为。
+    """
     dir_p = Path(dir_path)
     if not dir_p.is_dir():
         raise ValueError(f"Directory not found: {dir_path}")
 
-    personas = []
+    personas: list[Persona] = []
     for yaml_file in sorted(dir_p.glob("*.yaml")):
         persona = load_persona_from_yaml(str(yaml_file), difficulty=difficulty)
         personas.append(persona)
+
+    if include_user:
+        user_dir = dir_p / "_user"
+        if user_dir.is_dir():
+            for yaml_file in sorted(user_dir.glob("*.yaml")):
+                persona = load_persona_from_yaml(
+                    str(yaml_file), difficulty=difficulty
+                )
+                personas.append(persona)
+
     return personas
 
 

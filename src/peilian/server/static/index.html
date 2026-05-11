@@ -14,6 +14,8 @@
   </div>
   <div class="nav-links">
     <a href="/" class="active">首页</a>
+    <a href="/persona_form.html">+ 新建客户</a>
+    <a href="/scenario_form.html">+ 新建场景</a>
   </div>
   <div class="spacer"></div>
 </nav>
@@ -36,8 +38,23 @@
   <div class="card fade-in">
     <h2>选择客户画像</h2>
     <p class="card-subtitle">每位客户都有独立的家庭背景、隐藏关切与坚持度，挑一位开始练习。</p>
+    <div class="card-actions">
+      <a href="/persona_form.html" class="btn btn-outline">+ 新建自定义客户</a>
+    </div>
     <div id="persona-grid" class="persona-grid">
       <div class="empty-state"><span class="loading"></span> 加载客户画像中...</div>
+    </div>
+  </div>
+
+  <!-- 场景选择 -->
+  <div class="card fade-in">
+    <h2>选择陪练场景</h2>
+    <p class="card-subtitle">场景决定了对话发生的情境与客户态度起点（地点 / 关系 / 时间压力）。</p>
+    <div class="card-actions">
+      <a href="/scenario_form.html" class="btn btn-outline">+ 新建自定义场景</a>
+    </div>
+    <div id="scenario-grid" class="scenario-grid">
+      <div class="empty-state"><span class="loading"></span> 加载场景中...</div>
     </div>
   </div>
 
@@ -68,6 +85,7 @@
 
 <script>
   let selectedPersona = null;
+  let selectedScenario = 'office_first_meet';
 
   // 取姓名首字作头像（中文取最后一个字，英文取首字母），避免按"姓"重复
   function avatarChar(name) {
@@ -97,6 +115,7 @@
       grid.innerHTML = personas.map(p => `
         <div class="persona-card" data-id="${escapeHtml(p.id)}" role="button" tabindex="0">
           <div class="check">✓</div>
+          ${p.is_builtin === false ? '<div class="badge-row"><span class="badge-custom">自定义</span></div>' : ''}
           <div class="header">
             <div class="avatar">${escapeHtml(avatarChar(p.name))}</div>
             <div>
@@ -109,6 +128,9 @@
           </div>
           <div class="info-row">
             <div><span class="label">收入：</span>${escapeHtml(p.income_level || '—')}</div>
+          </div>
+          <div class="info-row">
+            <div><span class="label">口语化：</span>${escapeHtml(p.colloquial_style || 'off')}</div>
           </div>
           ${p.hidden_concerns_labels && p.hidden_concerns_labels.length ? `
             <div class="concerns">
@@ -144,6 +166,60 @@
     btn.textContent = '开始陪练 →';
   }
 
+  async function loadScenarios() {
+    const grid = document.getElementById('scenario-grid');
+    try {
+      const resp = await fetch('/api/scenarios');
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const scenarios = await resp.json();
+      if (!scenarios.length) {
+        grid.innerHTML = '<div class="empty-state">暂无场景</div>';
+        return;
+      }
+      grid.innerHTML = scenarios.map(s => `
+        <div class="scenario-card" data-id="${escapeHtml(s.id)}" role="button" tabindex="0">
+          <div class="check">✓</div>
+          <div class="scene-name">
+            ${escapeHtml(s.name)}
+            ${s.is_builtin === false ? '<span class="badge-custom">自定义</span>' : ''}
+          </div>
+          <div class="scene-snippet">${escapeHtml(s.context || '')}</div>
+          ${s.tags && s.tags.length ? `
+            <div class="scene-tags">
+              ${s.tags.map(t => `<span>${escapeHtml(t)}</span>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+
+      grid.querySelectorAll('.scenario-card').forEach(card => {
+        const id = card.getAttribute('data-id');
+        card.addEventListener('click', () => selectScenario(id));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectScenario(id);
+          }
+        });
+      });
+
+      // 默认选第一个（优先 office_first_meet）
+      const defaultId = scenarios.find(s => s.id === 'office_first_meet')
+        ? 'office_first_meet'
+        : scenarios[0].id;
+      selectScenario(defaultId);
+    } catch (e) {
+      grid.innerHTML = '<div class="empty-state">加载失败：' + escapeHtml(e.message) + '</div>';
+    }
+  }
+
+  function selectScenario(id) {
+    selectedScenario = id;
+    document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('selected'));
+    const target = document.querySelector(`.scenario-card[data-id="${id}"]`);
+    if (target) target.classList.add('selected');
+  }
+
   // 难度卡片样式同步
   document.querySelectorAll('.difficulty-option').forEach(opt => {
     const radio = opt.querySelector('input');
@@ -164,7 +240,11 @@
       const resp = await fetch('/api/sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ persona_id: selectedPersona, difficulty })
+        body: JSON.stringify({
+          persona_id: selectedPersona,
+          difficulty,
+          scenario_id: selectedScenario,
+        })
       });
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({}));
@@ -183,6 +263,7 @@
   });
 
   loadPersonas();
+  loadScenarios();
 </script>
 </body>
 </html>

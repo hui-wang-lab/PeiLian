@@ -21,3 +21,4 @@ hidden_concerns:
 persistence: 0.8
 expressiveness: 0.4
 initial_mood: "谨慎，略带审视"
+colloquial_style: mild

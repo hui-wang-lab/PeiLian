@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新建场景 · PeiLian</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="brand">
+    <span class="logo">P</span>
+    <span>PeiLian 陪练系统</span>
+  </div>
+  <div class="nav-links">
+    <a href="/">首页</a>
+    <a href="/persona_form.html">+ 新建客户</a>
+    <a href="/scenario_form.html" class="active">+ 新建场景</a>
+  </div>
+  <div class="spacer"></div>
+</nav>
+
+<div class="form-page-container">
+  <a class="form-back" href="/">← 返回首页</a>
+
+  <div class="card fade-in">
+    <h2>新建陪练场景</h2>
+    <p class="card-subtitle">选一个常见场景，再补充地点、关系和限制条件。系统会自动生成陪练情境。</p>
+
+    <div id="form-banner" class="form-banner"></div>
+
+    <form id="scenario-form" autocomplete="off">
+      <div class="form-field">
+        <label class="field-label">场景模板</label>
+        <div class="preset-grid" id="scenario-preset-grid">
+          <button type="button" class="preset-option checked" data-preset="first_meet">
+            <span class="preset-title">初次见面</span>
+            <span class="preset-desc">建立信任、了解基本情况</span>
+          </button>
+          <button type="button" class="preset-option" data-preset="followup">
+            <span class="preset-title">二次跟进</span>
+            <span class="preset-desc">复盘需求、回应上次异议</span>
+          </button>
+          <button type="button" class="preset-option" data-preset="phone_intro">
+            <span class="preset-title">电话邀约</span>
+            <span class="preset-desc">时间短，需要先争取继续聊</span>
+          </button>
+          <button type="button" class="preset-option" data-preset="family_decision">
+            <span class="preset-title">家庭决策</span>
+            <span class="preset-desc">客户要兼顾家人意见</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="field-label" for="f-id">场景编号</label>
+          <input type="text" id="f-id" name="id" placeholder="留空自动生成">
+          <div class="field-hint">可留空；系统会生成小写字母 / 数字 / 下划线编号。</div>
+        </div>
+        <div class="form-field">
+          <label class="field-label" for="f-name">场景名称<span class="required">*</span></label>
+          <input type="text" id="f-name" name="name" placeholder="如 客户家中夜间拜访" value="办公室初次面谈" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="field-label" for="f-place">见面方式 / 地点<span class="required">*</span></label>
+          <input type="text" id="f-place" name="place" placeholder="如 客户办公室、咖啡馆、电话中" value="客户办公室" required>
+        </div>
+        <div class="form-field">
+          <label class="field-label" for="f-relationship">双方关系<span class="required">*</span></label>
+          <select id="f-relationship" name="relationship" required>
+            <option value="第一次见面，只是经朋友介绍认识" selected>第一次见面，只是经朋友介绍认识</option>
+            <option value="之前见过一次，客户还记得代理人">之前见过一次，客户还记得代理人</option>
+            <option value="老客户转介绍，客户愿意给一点时间">老客户转介绍，客户愿意给一点时间</option>
+            <option value="电话陌生触达，客户防备心较强">电话陌生触达，客户防备心较强</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="field-label" for="f-attitude">客户开场状态<span class="required">*</span></label>
+          <select id="f-attitude" name="attitude" required>
+            <option value="礼貌但略微戒备，不想一上来就被推销" selected>礼貌但略微戒备</option>
+            <option value="愿意听，但希望对方直接说重点">愿意听但想听重点</option>
+            <option value="比较忙，随时可能结束对话">比较忙，随时可能结束</option>
+            <option value="对保险兴趣不高，但愿意给一个解释机会">兴趣不高但愿意听</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="field-label" for="f-time-limit">可用时间<span class="required">*</span></label>
+          <select id="f-time-limit" name="time_limit" required>
+            <option value="只能预留 5 分钟">5 分钟</option>
+            <option value="只能预留 15 分钟" selected>15 分钟</option>
+            <option value="可以聊 30 分钟左右">30 分钟</option>
+            <option value="时间相对充裕，但不想被拖太久">时间较充裕</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label class="field-label" for="f-boundary">客户底线 / 敏感点</label>
+        <input type="text" id="f-boundary" name="boundary" placeholder="如 不想当场做决定、对价格敏感、反感夸大收益" value="不想当场做决定，对价格和健康告知比较敏感">
+      </div>
+
+      <details class="advanced-editor">
+        <summary>查看并微调生成的情境文案</summary>
+        <div class="form-field">
+          <label class="field-label" for="f-context">情境</label>
+          <textarea id="f-context" name="context" rows="4"></textarea>
+        </div>
+        <div class="form-field">
+          <label class="field-label" for="f-constraints">约束</label>
+          <textarea id="f-constraints" name="constraints" rows="4"></textarea>
+        </div>
+      </details>
+
+      <div class="generated-preview" id="scenario-preview"></div>
+
+      <div class="form-field">
+        <label class="field-label" for="f-tags">标签</label>
+        <div class="tag-input-row" id="tag-input-row">
+          <input type="text" id="f-tag-input" placeholder="输入后回车或逗号分隔添加">
+        </div>
+        <div class="field-hint">可选；模板会自动加入基础标签。</div>
+      </div>
+
+      <div class="form-field" style="display:flex; gap:12px; justify-content:flex-end;">
+        <a href="/" class="btn btn-outline">取消</a>
+        <button type="submit" id="submit-btn" class="btn btn-primary">保存并返回首页</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/js/scenario_form.js"></script>
+</body>
+</html>

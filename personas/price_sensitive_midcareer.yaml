@@ -20,3 +20,4 @@ hidden_concerns:
 persistence: 0.7
 expressiveness: 0.5
 initial_mood: "略微戒备但礼貌"
+colloquial_style: mild
