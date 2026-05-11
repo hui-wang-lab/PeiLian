@@ -177,9 +177,9 @@ python -m peilian.server
 - [x] 浏览器端到端可走通（人工验收：内置/自定义场景 + 内置/自定义 persona 都能开会话 → 对话 → 看报告）
 
 **Git**
-- [ ] 至少两个 commit：`docs(P5.1): 起草 phase-5.1.md 阶段计划` + `feat(P5.1): 实现场景可配 + 自定义角色 + AI 客户口语化`
-- [ ] 第一行含 `P5.1`，对齐既有 `docs(PN) / feat(PN)` 风格
-- [ ] 工作区干净
+- [x] 至少两个 commit：`docs(P5.1): 起草 phase-5.1.md 阶段计划` + `feat(P5.1): 实现场景可配 + 自定义角色 + AI 客户口语化`
+- [x] 第一行含 `P5.1`，对齐既有 `docs(PN) / feat(PN)` 风格
+- [x] 工作区干净
 
 ---
 
