@@ -43,5 +43,10 @@ Thumbs.db
 *.log
 .cache/
 
+# 部署脚本（含敏感信息）与内部技术文档
+docs/AI_CUSTOMER_TECHNICAL.md
+scripts/deploy.py
+scripts/deploy_restart.py
+
 # Claude Code 本地状态（settings.local.json 是本机配置，不进版本管理）
 .claude/settings.local.json

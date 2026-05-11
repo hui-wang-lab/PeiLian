@@ -82,7 +82,31 @@
 - 每个阶段开始前，**先写验收清单**——写不出来说明阶段没切干净
 - Plan 模式产出保留到 `docs/phases/phase-N.md`
 
-### 5.4 沉淀
+### 5.4 提交规范（Conventional Commits + Phase 标注）
+
+本项目的 commit message 统一使用 Conventional Commits 前缀 + `(P{N})` scope。每 Phase 按以下 4 步节奏提交：
+
+```
+# Step 1 — 切游标（用户确认后，代码未动）
+chore: 切换 ROADMAP 游标到 P{N}
+
+# Step 2 — 起草 spec（写完 phase-N.md）
+docs(P{N}): 起草 phase-N.md 阶段计划
+
+# Step 3 — 评审修订 spec（spec review 修完问题后）
+docs(P{N}): 评审修订 phase-N.md 阶段计划
+
+# Step 4 — 实现（代码通过验收后）
+feat(P{N}): 实现 {功能描述}
+```
+
+**原则**：
+- `chore` 用于纯流程操作（切游标、改配置），`docs` 用于文档/spec 变更，`feat` 用于功能实现
+- 每步独立 commit，不攒到实现后一起提交——这样 spec review 和代码 review 各有一条干净的 diff
+- 不要在 feat commit 里混杂 spec 修改；如果实现后发现 spec 需同步，单独开 `docs(P{N}): 同步 ROADMAP P{N} 段落为实际实现方案`
+- `Phase N` 字样必须在第一行（方便 `git log --oneline` 阶段检索）
+
+### 5.5 沉淀
 
 按内容性质分两类去向，**不要求**仓库内一定有 `memory/` 目录：
 
